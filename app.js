@@ -3,50 +3,45 @@ import * as chromeLauncher from 'chrome-launcher';
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 
-console.log("Hello World");
+console.log("Node script");
+
+var arrURLs = ['https://fightden.ca',
+'https://fightden.ca/about'
+]
 
 //lighthouseAudit("https://jax.tech");
 
-async function lighthouseAudit(strURL)
+function discoverFonts(arrURLs)
 {
-	console.log("Starting Lighthouse audit");
-	const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
-	const options = {logLevel: 'info', output: 'html', onlyCategories: ['performance'], port: chrome.port};
-	const runnerResult = await lighthouse(strURL, options);
+	console.log("Discover Fonts");
+	//fightden.ca
+	//"Font Awesome 6 Brands": "U+F16D"
+	//"Font Awesome 6 Pro": "U+F060,U+F061,U+F073,U+F095,U+F10D,U+F10E,U+F3C5,U+F438,U+F675"
+	//U+F060
+	/*fa-solid*/
+// .fa-boxing-glove { --fa: "\f438"; }
+// .fa-calendar-days { --fa: "\f073"; }
+// .fa-location-dot { --fa: "\f3c5"; }
+// .fa-megaphone { --fa: "\f675"; }
+// .fa-phone { --fa: "\f095"; }
+// .fa-quote-left { --fa: "\f10d"; }
+// .fa-quote-right { --fa: "\f10e"; }
 
-	// `.report` is the HTML report as a string
-	const reportHtml = runnerResult.report;
-	fs.writeFileSync('lhreport.html', reportHtml);
+	for (const url of arrURLs)
+	{
+		const command = `npx glyphhanger ${url} --json`;
+		//const command = `npx glyphhanger ${url} --family='Font Awesome 7 Pro'`;
+		console.log(command);
 
-	// `.lhr` is the Lighthouse Result as a JS object
-	console.log('Report is done for', runnerResult.lhr.finalDisplayedUrl);
-	console.log('Performance score was', runnerResult.lhr.categories.performance.score * 100);
-
-	chrome.kill();
+		try
+		{
+			console.log('Crawling for used glyphs');
+			execSync(command, { stdio: 'inherit' });
+			console.log('Font identification completed successfully!');
+		} catch (error)
+		{
+			console.error('An error occured during font identifaction:', error.message);
+			process.exit(1);
+		}
+	}
 }
-
-async function runAudit() {
-  // 1. Launch Puppeteer in headless mode
-  console.log("launching puppeteer");
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--remote-debugging-port=9222'] // Necessary for Lighthouse to connect
-  });
-  console.log("Browser obj:" + browser);
-
-  // 2. Run Lighthouse targeting Puppeteer's browser port
-  const options = {
-    logLevel: 'info',
-    output: 'html',
-    port: 9222
-  };
-
-  const runnerResult = await lighthouse('https://example.com', options);
-
-  // 3. Save the report and close the browser cleanly
-  fs.writeFileSync('report.html', runnerResult.report);
-  await browser.close();
-  console.log('Audit complete! Report saved to report.html');
-}
-
-runAudit();

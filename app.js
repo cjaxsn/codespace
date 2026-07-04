@@ -2,6 +2,7 @@ import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
 import puppeteer from 'puppeteer';
 import fs from 'fs';
+import { execSync } from 'child_process';
 
 console.log("Node script");
 
@@ -9,7 +10,7 @@ var arrURLs = ['https://fightden.ca',
 'https://fightden.ca/about'
 ]
 
-//lighthouseAudit("https://jax.tech");
+discoverFonts(arrURLs);
 
 function discoverFonts(arrURLs)
 {

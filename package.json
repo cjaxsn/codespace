@@ -1,0 +1,15 @@
+{
+  "name": "minify",
+  "version": "1.0.0",
+  "description": "Minifier",
+  "license": "ISC",
+  "author": "Corey Jackson",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "lighthouse": "^13.4.0"
+  }
+}

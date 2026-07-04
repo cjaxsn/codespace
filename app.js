@@ -1,9 +1,11 @@
 import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
+import puppeteer from 'puppeteer';
+import fs from 'fs';
 
 console.log("Hello World");
 
-lighthouseAudit("https://jax.tech");
+//lighthouseAudit("https://jax.tech");
 
 async function lighthouseAudit(strURL)
 {
@@ -22,3 +24,27 @@ async function lighthouseAudit(strURL)
 
 	chrome.kill();
 }
+
+async function runAudit() {
+  // 1. Launch Puppeteer in headless mode
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--remote-debugging-port=9222'] // Necessary for Lighthouse to connect
+  });
+
+  // 2. Run Lighthouse targeting Puppeteer's browser port
+  const options = {
+    logLevel: 'info',
+    output: 'html',
+    port: 9222
+  };
+
+  const runnerResult = await lighthouse('https://example.com', options);
+
+  // 3. Save the report and close the browser cleanly
+  fs.writeFileSync('report.html', runnerResult.report);
+  await browser.close();
+  console.log('Audit complete! Report saved to report.html');
+}
+
+runAudit();

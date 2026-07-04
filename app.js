@@ -27,10 +27,12 @@ async function lighthouseAudit(strURL)
 
 async function runAudit() {
   // 1. Launch Puppeteer in headless mode
+  console.log("launching puppeteer");
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--remote-debugging-port=9222'] // Necessary for Lighthouse to connect
   });
+  console.log("Browser obj:" + browser);
 
   // 2. Run Lighthouse targeting Puppeteer's browser port
   const options = {
